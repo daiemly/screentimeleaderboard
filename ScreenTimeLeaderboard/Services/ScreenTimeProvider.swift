@@ -28,8 +28,18 @@ protocol ScreenTimeProviding {
 }
 
 struct ScreenTimeProvider: ScreenTimeProviding {
+    static var runsOnSimulator: Bool {
+        #if targetEnvironment(simulator)
+        true
+        #else
+        false
+        #endif
+    }
+
     func requestAuthorization() async -> ScreenTimePermissionStatus {
-        #if canImport(FamilyControls)
+        #if targetEnvironment(simulator)
+        return .approved
+        #elseif canImport(FamilyControls)
         return await FamilyControlsScreenTimeProvider().requestAuthorization()
         #else
         return .approved
@@ -37,20 +47,24 @@ struct ScreenTimeProvider: ScreenTimeProviding {
     }
 
     func currentUsage() async -> ScreenTimeSnapshot {
-        #if canImport(FamilyControls)
+        #if targetEnvironment(simulator)
+        return Self.demoSnapshot
+        #elseif canImport(FamilyControls)
         return await FamilyControlsScreenTimeProvider().currentUsage()
         #else
-        return ScreenTimeSnapshot(
-            totalMinutes: 254,
-            appBreakdown: [
-                AppUsage(appName: "YouTube", minutes: 83),
-                AppUsage(appName: "Instagram", minutes: 57),
-                AppUsage(appName: "Messages", minutes: 36),
-                AppUsage(appName: "Safari", minutes: 31)
-            ]
-        )
+        return Self.demoSnapshot
         #endif
     }
+
+    static let demoSnapshot = ScreenTimeSnapshot(
+        totalMinutes: 254,
+        appBreakdown: [
+            AppUsage(appName: "YouTube", minutes: 83),
+            AppUsage(appName: "Instagram", minutes: 57),
+            AppUsage(appName: "Messages", minutes: 36),
+            AppUsage(appName: "Safari", minutes: 31)
+        ]
+    )
 }
 
 #if canImport(FamilyControls)
@@ -69,15 +83,7 @@ struct FamilyControlsScreenTimeProvider: ScreenTimeProviding {
     func currentUsage() async -> ScreenTimeSnapshot {
         // DeviceActivity reports are delivered through an extension. The app keeps
         // using mock-shaped data until that extension and backend sync are added.
-        return ScreenTimeSnapshot(
-            totalMinutes: 254,
-            appBreakdown: [
-                AppUsage(appName: "YouTube", minutes: 83),
-                AppUsage(appName: "Instagram", minutes: 57),
-                AppUsage(appName: "Messages", minutes: 36),
-                AppUsage(appName: "Safari", minutes: 31)
-            ]
-        )
+        return ScreenTimeProvider.demoSnapshot
     }
 }
 #endif

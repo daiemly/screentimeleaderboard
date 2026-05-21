@@ -8,6 +8,7 @@ final class LeaderboardStore: ObservableObject {
     @Published var selectedGroupID: LeaderboardGroup.ID?
     @Published var hasCompletedOnboarding: Bool
     @Published var permissionStatus: ScreenTimePermissionStatus
+    @Published var screenTimeConnectionDetail: String?
     @Published var lastSyncedAt: Date
 
     private let screenTimeProvider: ScreenTimeProviding
@@ -28,6 +29,17 @@ final class LeaderboardStore: ObservableObject {
 
     func requestScreenTimePermission() async {
         permissionStatus = await screenTimeProvider.requestAuthorization()
+
+        if ScreenTimeProvider.runsOnSimulator {
+            screenTimeConnectionDetail =
+                "Screen Time does not run in the Simulator. Using demo usage data so you can try the app. Run on a physical iPhone for the real permission prompt."
+        } else if permissionStatus == .denied {
+            screenTimeConnectionDetail =
+                "Could not reach Screen Time (FamilyControlsAgent). Run on a physical iPhone, add the Family Controls capability in Xcode, and request the entitlement from Apple (see README)."
+        } else {
+            screenTimeConnectionDetail = nil
+        }
+
         if permissionStatus == .approved {
             await refreshCurrentUserUsage()
         }

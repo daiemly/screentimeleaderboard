@@ -99,7 +99,7 @@ private struct LockBadge: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
             .background(isLocked ? Color.gray.opacity(0.14) : Color.green.opacity(0.14), in: Capsule())
-            .foregroundStyle(isLocked ? .secondary : .green)
+            .foregroundStyle(isLocked ? Color.secondary : Color.green)
     }
 }
 

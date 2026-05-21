@@ -16,7 +16,10 @@ The app implements the beta product loop with local mock data:
 
 ## Open
 
-Open `ScreenTimeLeaderboard.xcodeproj` in Xcode and run the `ScreenTimeLeaderboard` scheme on an iOS simulator.
+Open `ScreenTimeLeaderboard.xcodeproj` in Xcode.
+
+- **Simulator:** UI and mock leaderboard data work, but Apple's Screen Time APIs do not. "Connect Screen Time" uses demo data and shows a note in onboarding.
+- **Physical iPhone:** Required for the real Screen Time permission sheet and `FamilyControls` agent.
 
 ## Screen Time Integration
 
@@ -24,7 +27,9 @@ Open `ScreenTimeLeaderboard.xcodeproj` in Xcode and run the `ScreenTimeLeaderboa
 
 To connect real data:
 
-1. Request the Family Controls entitlement from Apple.
-2. Add a Device Activity report extension.
-3. Replace the placeholder snapshot in `FamilyControlsScreenTimeProvider.currentUsage()`.
-4. Add backend sync for group leaderboards and invite links.
+1. Request the [Family Controls entitlement](https://developer.apple.com/contact/request/family-controls-distribution) from Apple.
+2. In Xcode, add the **Family Controls** capability to the app target (updates `ScreenTimeLeaderboard.entitlements`).
+3. Run on a **physical device** signed with a profile that includes that entitlement.
+4. Add a Device Activity report extension.
+5. Replace the placeholder snapshot in `FamilyControlsScreenTimeProvider.currentUsage()`.
+6. Add backend sync for group leaderboards and invite links.

@@ -25,6 +25,13 @@ struct OnboardingView: View {
                     OnboardingStepRow(number: 1, title: "Connect Screen Time", subtitle: store.permissionStatus.title)
                     OnboardingStepRow(number: 2, title: "Create a leaderboard", subtitle: "Invite friends with a link")
                     OnboardingStepRow(number: 3, title: "Check live rankings", subtitle: "React when someone is cooked")
+
+                    if let detail = store.screenTimeConnectionDetail {
+                        Text(detail)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
